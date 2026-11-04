@@ -1,6 +1,8 @@
 #ifndef TRAINS_LIB
 #define TRAINS_LIB
 
+#include <cstddef>
+
 namespace trains_details {
   // counter na id wagonu chyba
 }
