@@ -2,6 +2,8 @@
 #define TRAINS_LIB
 
 #include <cstddef>
+#include <cstdint>
+#include <string>
 
 // TODO: aliasy dla size_t
 // TODO: stale wagonseries, liczby miejsc
