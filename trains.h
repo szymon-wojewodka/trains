@@ -18,7 +18,7 @@ namespace trains_details {
 // wszystkie liczby size_t
 // aliasy dla typow (czy w namespace?)
 
-enum class WagonType { FIRST_CLASS, SECOND_CLASS, SLEEPER, DINING };
+enum class WagonType : uint8_t { FIRST_CLASS, SECOND_CLASS, SLEEPER, DINING };
 
 // TODO:
 //  ctors: 2 i 1 argumentowy, copy, move
