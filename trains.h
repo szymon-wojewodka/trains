@@ -33,10 +33,12 @@ class WagonSeries {
  public:
   WagonType type() {
     // TODO
+    return {};
   }
 
   std::size_t seats() {
     // TODO
+    return 0;
   }
 
  private:
@@ -63,10 +65,12 @@ class Wagon {
   using unique_id_t = std::size_t;
   unique_id_t number() {
     // TODO
+    return 0;
   }
 
   WagonSeries series() {
     // TODO
+    return {};
   }
 
  private:
@@ -82,10 +86,12 @@ class Locomotive {
  public:
   std::string designation() const {
     // TODO;
+    return "";
   }
 
   std::size_t max_wagons() const {
     // TODO;
+    return 0;
   }
 
  private:
@@ -106,14 +112,17 @@ class Train {
  public:
   std::size_t size() {
     // TODO stl wie
+    return 0;
   }
 
   std::size_t capacity() {
     // TODO lokomotywa.max_wagon()
+    return 0;
   }
 
   std::size_t seats() const {
     // TODO trzymac licznik
+    return 0;
   }
 
   const Locomotive& locomotive() const {
@@ -140,10 +149,12 @@ class Depot {
 
   std::size_t locomotives() {
     // TODO
+    return 0;
   }
 
   std::size_t wagons() {
     // TODO
+    return 0;
   }
 
  private:
