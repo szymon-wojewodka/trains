@@ -3,16 +3,16 @@
 
 #include <cstddef>
 
-//TODO: aliasy dla size_t
-//TODO: stale wagonseries, liczby miejsc
-//TODO: const-correctness (metody tez) 
-//TODO: main_depot, daje referencje do zajezdni glownej,
-// ktora na start konstruuje sie z lokomotywami i wagonami 
+// TODO: aliasy dla size_t
+// TODO: stale wagonseries, liczby miejsc
+// TODO: const-correctness (metody tez)
+// TODO: main_depot, daje referencje do zajezdni glownej,
+//  ktora na start konstruuje sie z lokomotywami i wagonami
 namespace trains_details {
   constinit std::size_t wagons_ever_built{0};
   constinit std::size_t wagons_in_service{0};
   // counter na id wagonu chyba
-}
+}  // namespace trains_details
 
 // wszedzie =, += dajace referencje
 // wszystkie liczby size_t
@@ -68,92 +68,92 @@ class Wagon {
   }
 
  private:
-  
 };
 
-// gdy nazwa == "" -> nazwa = "?" 
+// gdy nazwa == "" -> nazwa = "?"
 // default ctor
 // move ctor, operator= z move
 // kopiowanie = delete
 // jawna konwersja na bool
 // operator<<
 class Locomotive {
-  public:
-    std::string designation() const {
-      //TODO;
-    }
+ public:
+  std::string designation() const {
+    // TODO;
+  }
 
-    std::size_t max_wagons() const {
-      //TODO;
-    }
+  std::size_t max_wagons() const {
+    // TODO;
+  }
 
-  private:
-    std::string designation;
-    std::size_t max_wagons;
+ private:
+  std::string designation;
+  std::size_t max_wagons;
 };
 
 // przechowywanie listy wagonow do rozwazenia (stl)
 // default ctor
 // ctor z przenoszeniem lokomotywy, initializer list, musimy jakos pominac puste wagony
 // move ctor, operator= z move, po move nie ma lokomotywy i wagonow (jest pusty)
-// nie ma kopii 
+// nie ma kopii
 // operator+= lvalue -> kopia, rvalue -> move
 // opeartor[] 0->max-1
 // konwersja na bool
 // operator<< korzystajaca z operator<< lokomotywy i wagonow
 class Train {
  public:
-   std::size_t size() {
-     //TODO stl wie 
-   }
+  std::size_t size() {
+    // TODO stl wie
+  }
 
-   std::size_t capacity() {
-      //TODO lokomotywa.max_wagon()
-   }
+  std::size_t capacity() {
+    // TODO lokomotywa.max_wagon()
+  }
 
-   std::size_t seats() const {
-      //TODO trzymac licznik
-   }
+  std::size_t seats() const {
+    // TODO trzymac licznik
+  }
 
-   const Locomotive& locomotive() const {
-     //TODO
-   }
+  const Locomotive& locomotive() const {
+    // TODO
+  }
+
  private:
 };
 
 // jakas struktura (pewnie queue)
-// brak kopiowania 
+// brak kopiowania
 // operator+=  (dla wagonu tylko move)
-// dziedziczenie po dwoch depotach? 
+// dziedziczenie po dwoch depotach?
 //
 class Depot {
  public:
-   Locomotive& release_locomotive() {
-     //TODO
-   }
+  Locomotive& release_locomotive() {
+    // TODO
+  }
 
-   Wagon& release_wagon() {
-     //TODO
-   }
+  Wagon& release_wagon() {
+    // TODO
+  }
 
-   std::size_t locomotives() {
-     //TODO
-   }
+  std::size_t locomotives() {
+    // TODO
+  }
 
-   std::size_t wagons() {
-     //TODO
-   }
+  std::size_t wagons() {
+    // TODO
+  }
+
  private:
-
 };
 
 class Dispatcher {
  public:
-   const Depot& yard() {
-     //TODO
-   }
+  const Depot& yard() {
+    // TODO
+  }
 
-   // metoda assemble
+  // metoda assemble
  private:
 };
 
