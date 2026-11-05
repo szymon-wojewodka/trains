@@ -38,8 +38,8 @@ class WagonSeries {
   }
 
  private:
-  WagonType type;
-  std::size_t seats_amount;
+  WagonType type_;
+  std::size_t seats_amount_;
 };
 
 // TODO:
@@ -87,8 +87,8 @@ class Locomotive {
   }
 
  private:
-  std::string designation;
-  std::size_t max_wagons;
+  std::string designation_;
+  std::size_t max_wagons_;
 };
 
 // przechowywanie listy wagonow do rozwazenia (stl)

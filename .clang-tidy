@@ -15,4 +15,8 @@ WarningsAsErrors: 'bugprone-*'
 CheckOptions:
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.VariableCase: snake_case
+  readability-identifier-naming.PrivateMemberCase: snake_case
+  readability-identifier-naming.PrivateMemberSuffix: _
+  readability-identifier-naming.ProtectedMemberCase: snake_case
+  readability-identifier-naming.ProtectedMemberSuffix: _
   modernize-pass-by-value.IncludeStyle: google
