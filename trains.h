@@ -4,9 +4,16 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <utility>
+
+enum class WagonType : std::uint8_t {
+  FIRST_CLASS,
+  SECOND_CLASS,
+  SLEEPER,
+  DINING
+};
 
 // TODO: aliasy dla size_t
-// TODO: stale wagonseries, liczby miejsc
 // TODO: const-correctness (metody tez)
 // TODO: main_depot, daje referencje do zajezdni glownej,
 //  ktora na start konstruuje sie z lokomotywami i wagonami
@@ -14,13 +21,32 @@ namespace trains_details {
   constinit std::size_t wagons_ever_built{0};
   constinit std::size_t wagons_in_service{0};
   // counter na id wagonu chyba
+
+  namespace seat_counts {
+    constexpr std::size_t FIRST_CLASS = 54;
+    constexpr std::size_t SECOND_CLASS = 80;
+    constexpr std::size_t SLEEPER = 30;
+    constexpr std::size_t DINING = 32;
+  }  // namespace seat_counts
+
+  std::size_t std_series_seat_count(WagonType type) {
+    switch (type) {
+      case WagonType::FIRST_CLASS:
+        return seat_counts::FIRST_CLASS;
+      case WagonType::SECOND_CLASS:
+        return seat_counts::SECOND_CLASS;
+      case WagonType::SLEEPER:
+        return seat_counts::SLEEPER;
+      case WagonType::DINING:
+        return seat_counts::DINING;
+    }
+    std::unreachable();
+  }
 }  // namespace trains_details
 
 // wszedzie =, += dajace referencje
 // wszystkie liczby size_t
 // aliasy dla typow (czy w namespace?)
-
-enum class WagonType : uint8_t { FIRST_CLASS, SECOND_CLASS, SLEEPER, DINING };
 
 // TODO:
 //  ctors: 2 i 1 argumentowy, copy, move
