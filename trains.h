@@ -88,7 +88,6 @@ class WagonSeries {
 };
 
 std::ostream& operator<<(std::ostream& out, const WagonSeries& f) {
-  // [typ, miejsca: liczba]
   return out << std::format("[{}, miejsca: {}]",
                      trains_details::get_wagon_info(f.type()).name, f.seats());
 }
