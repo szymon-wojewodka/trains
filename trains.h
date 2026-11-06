@@ -57,7 +57,7 @@ namespace trains_details {
 
 class WagonSeries {
  public:
-  constexpr WagonSeries(WagonType type, size_t seats)
+  constexpr explicit WagonSeries(WagonType type, size_t seats)
       : type_(type), seats_count_(seats) {}
 
   constexpr WagonSeries(WagonType type)
