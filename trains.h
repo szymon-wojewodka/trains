@@ -117,7 +117,7 @@ class Wagon {
 
   WagonSeries series() {
     // TODO
-    return {};
+    return {WagonType::FIRST_CLASS};
   }
 
  private:
