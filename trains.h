@@ -66,15 +66,13 @@ class WagonSeries {
   constexpr WagonSeries(WagonType type)
       : WagonSeries(type, trains_details::get_wagon_info(type).seat_count) {}
 
-  constexpr WagonSeries() = delete;
-  constexpr WagonSeries(WagonSeries& series) = default;
+  WagonSeries() = delete;
+  constexpr WagonSeries(const WagonSeries&) = default;
+  constexpr WagonSeries(WagonSeries&&) = default;
 
-  constexpr WagonSeries& operator=(const WagonSeries& series) = default;
-  constexpr WagonSeries& operator=(WagonSeries&& series) = default;
-  constexpr bool operator==(const WagonSeries& other) const = default;
-
-  // Deletes: <, <=, >, and >= too.
-  constexpr auto operator<=>(const WagonSeries&) const = delete;
+  constexpr WagonSeries& operator=(const WagonSeries&) = default;
+  constexpr WagonSeries& operator=(WagonSeries&&) = default;
+  constexpr bool operator==(const WagonSeries&) const = default;
 
   constexpr WagonType type() const {
     return type_;
@@ -89,9 +87,9 @@ class WagonSeries {
   std::size_t seats_count_;
 };
 
-std::ostream& operator<<(std::ostream& out, const WagonSeries& f) {
+inline std::ostream& operator<<(std::ostream& out, const WagonSeries& series) {
   return out << std::format("[{}, miejsca: {}]",
-                     trains_details::get_wagon_info(f.type()).name, f.seats());
+                     trains_details::get_wagon_info(series.type()).name, series.seats());
 }
 
 inline constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
