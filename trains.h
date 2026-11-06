@@ -93,6 +93,11 @@ std::ostream& operator<<(std::ostream& out, const WagonSeries& f) {
                      trains_details::get_wagon_info(f.type()).name, f.seats());
 }
 
+constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
+constexpr WagonSeries STANDARD_SECOND_CLASS{WagonType::SECOND_CLASS};
+constexpr WagonSeries STANDARD_SLEEPER{WagonType::SLEEPER};
+constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
+
 // TODO:
 // robienie unique_id
 // default ctor (id = 0)
