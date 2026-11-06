@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <format>
 #include <string>
 #include <utility>
 
@@ -22,23 +23,29 @@ namespace trains_details {
   constinit std::size_t wagons_in_service{0};
   // counter na id wagonu chyba
 
-  namespace seat_counts {
-    constexpr std::size_t FIRST_CLASS = 54;
-    constexpr std::size_t SECOND_CLASS = 80;
-    constexpr std::size_t SLEEPER = 30;
-    constexpr std::size_t DINING = 32;
-  }  // namespace seat_counts
+  struct WagonInfo {
+    std::size_t seat_count;
+    std::string_view name;
+  };
 
-  std::size_t std_series_seat_count(WagonType type) {
+  namespace standard_series {
+    constexpr WagonInfo FIRST_CLASS = {.seat_count = 54, .name = "1 klasa"};
+    constexpr WagonInfo SECOND_CLASS = {.seat_count = 80, .name = "2 klasa"};
+    constexpr WagonInfo SLEEPER = {.seat_count = 30, .name = "sypialny"};
+    constexpr WagonInfo DINING = {.seat_count = 32, .name = "restauracyjny"};
+  }  // namespace standard_series
+
+  constexpr WagonInfo get_wagon_info(WagonType type) {
+    using enum WagonType;
     switch (type) {
-      case WagonType::FIRST_CLASS:
-        return seat_counts::FIRST_CLASS;
+      case FIRST_CLASS:
+        return standard_series::FIRST_CLASS;
       case WagonType::SECOND_CLASS:
-        return seat_counts::SECOND_CLASS;
+        return standard_series::SECOND_CLASS;
       case WagonType::SLEEPER:
-        return seat_counts::SLEEPER;
+        return standard_series::SLEEPER;
       case WagonType::DINING:
-        return seat_counts::DINING;
+        return standard_series::DINING;
     }
     std::unreachable();
   }
@@ -48,29 +55,43 @@ namespace trains_details {
 // wszystkie liczby size_t
 // aliasy dla typow (czy w namespace?)
 
-// TODO:
-//  ctors: 2 i 1 argumentowy, copy, move
-//  brak default ctor
-//  operator= copy, move
-//  operator== (z niego !=), operator< itp. =delete
-//  wypisywanie na strumien (operator<<)
-//  wszystko musi byc constexpr (co to jest wszystko)
 class WagonSeries {
  public:
-  WagonType type() {
-    // TODO
-    return {};
+  constexpr WagonSeries(WagonType type, size_t seats)
+      : type_(type), seats_count_(seats) {}
+
+  constexpr WagonSeries(WagonType type)
+      : WagonSeries(type, trains_details::get_wagon_info(type).seat_count) {}
+
+  constexpr WagonSeries() = delete;
+  constexpr WagonSeries(WagonSeries& series) = default;
+
+  constexpr WagonSeries& operator=(const WagonSeries& series) = default;
+  constexpr WagonSeries& operator=(WagonSeries&& series) = default;
+  constexpr bool operator==(const WagonSeries& other) const = default;
+  constexpr bool operator!=(const WagonSeries& other) const = default;
+
+  // Deletes: <, <=, >, and >= too.
+  constexpr auto operator<=>(const WagonSeries&) const = delete;
+
+  constexpr WagonType type() const {
+    return type_;
   }
 
-  std::size_t seats() {
-    // TODO
-    return 0;
+  constexpr std::size_t seats() const {
+    return seats_count_;
   }
 
  private:
   WagonType type_;
-  std::size_t seats_amount_;
+  std::size_t seats_count_;
 };
+
+std::ostream& operator<<(std::ostream& out, const WagonSeries& f) {
+  // [typ, miejsca: liczba]
+  return out << std::format("[{}, miejsca: {}]",
+                     trains_details::get_wagon_info(f.type()).name, f.seats());
+}
 
 // TODO:
 // robienie unique_id
