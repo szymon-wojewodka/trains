@@ -6,6 +6,8 @@
 #include <format>
 #include <string>
 #include <utility>
+#include <ostream>
+#include <string_view>
 
 enum class WagonType : std::uint8_t {
   FIRST_CLASS,
@@ -19,8 +21,8 @@ enum class WagonType : std::uint8_t {
 // TODO: main_depot, daje referencje do zajezdni glownej,
 //  ktora na start konstruuje sie z lokomotywami i wagonami
 namespace trains_details {
-  constinit std::size_t wagons_ever_built{0};
-  constinit std::size_t wagons_in_service{0};
+  inline constinit std::size_t wagons_ever_built{0};
+  inline constinit std::size_t wagons_in_service{0};
   // counter na id wagonu chyba
 
   struct WagonInfo {
@@ -40,11 +42,11 @@ namespace trains_details {
     switch (type) {
       case FIRST_CLASS:
         return standard_series::FIRST_CLASS;
-      case WagonType::SECOND_CLASS:
+      case SECOND_CLASS:
         return standard_series::SECOND_CLASS;
-      case WagonType::SLEEPER:
+      case SLEEPER:
         return standard_series::SLEEPER;
-      case WagonType::DINING:
+      case DINING:
         return standard_series::DINING;
     }
     std::unreachable();
@@ -57,9 +59,10 @@ namespace trains_details {
 
 class WagonSeries {
  public:
-  constexpr explicit WagonSeries(WagonType type, size_t seats)
+  constexpr explicit WagonSeries(WagonType type, std::size_t seats)
       : type_(type), seats_count_(seats) {}
 
+  // Not explicit on purpose.
   constexpr WagonSeries(WagonType type)
       : WagonSeries(type, trains_details::get_wagon_info(type).seat_count) {}
 
@@ -69,7 +72,6 @@ class WagonSeries {
   constexpr WagonSeries& operator=(const WagonSeries& series) = default;
   constexpr WagonSeries& operator=(WagonSeries&& series) = default;
   constexpr bool operator==(const WagonSeries& other) const = default;
-  constexpr bool operator!=(const WagonSeries& other) const = default;
 
   // Deletes: <, <=, >, and >= too.
   constexpr auto operator<=>(const WagonSeries&) const = delete;
@@ -92,10 +94,10 @@ std::ostream& operator<<(std::ostream& out, const WagonSeries& f) {
                      trains_details::get_wagon_info(f.type()).name, f.seats());
 }
 
-constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
-constexpr WagonSeries STANDARD_SECOND_CLASS{WagonType::SECOND_CLASS};
-constexpr WagonSeries STANDARD_SLEEPER{WagonType::SLEEPER};
-constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
+inline constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
+inline constexpr WagonSeries STANDARD_SECOND_CLASS{WagonType::SECOND_CLASS};
+inline constexpr WagonSeries STANDARD_SLEEPER{WagonType::SLEEPER};
+inline constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
 
 // TODO:
 // robienie unique_id
