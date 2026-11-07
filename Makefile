@@ -9,6 +9,9 @@ test.cpp:
 
 test: test.cpp
 	$(CPPC) $(CPPFLAGS) $< -o $@
+
+example: trains_example.cpp
+	$(CPPC) $(CPPFLAGS) $< -o $@
  
 # clean:
 # 	rm -f *.o test
