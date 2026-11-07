@@ -1,6 +1,7 @@
 #ifndef TRAINS_LIB
 #define TRAINS_LIB
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <format>
@@ -89,7 +90,8 @@ class WagonSeries {
 
 inline std::ostream& operator<<(std::ostream& out, const WagonSeries& series) {
   return out << std::format("[{}, miejsca: {}]",
-                     trains_details::get_wagon_info(series.type()).name, series.seats());
+                            trains_details::get_wagon_info(series.type()).name,
+                            series.seats());
 }
 
 inline constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
@@ -129,7 +131,7 @@ inline constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
 //            Jeśli a = b to a pusty -> b pusty i a niepusty -> b niepusty
 //   - destruktorze:
 //      - wagon niepusty ? -1 : 0
-//      - przy przenoszeniu (operator, konstruktor) trzeba jawnie uczynic ten 
+//      - przy przenoszeniu (operator, konstruktor) trzeba jawnie uczynic ten
 //        przenoszony pustym zeby nie powtarzac odejmowania w desktruktorze
 //  Więcej grzechów nie pamiętam
 //
@@ -159,20 +161,45 @@ class Wagon {
 // operator<<
 class Locomotive {
  public:
+  explicit Locomotive(std::string designation, const std::size_t max_wagons)
+      : designation_(designation == "" ? "?" : std::move(designation)),
+        max_wagons_(max_wagons) {}
+
+  // Implicit construction is allowed, designation_ gets initialized to "".
+  Locomotive() : max_wagons_(0) {}
+
+  Locomotive(Locomotive&) = delete;
+  Locomotive(Locomotive&& other) noexcept
+      : designation_(std::move(other.designation_)), max_wagons_(other.max_wagons_) {
+    designation_ = "";
+    max_wagons_ = 0;
+  }
+
+  Locomotive& operator=(Locomotive&) = delete;
+  explicit operator bool() const {
+    return designation_ == "";
+  }
+
   std::string designation() const {
-    // TODO;
-    return "";
+    return designation_;
   }
 
   std::size_t max_wagons() const {
-    // TODO;
-    return 0;
+    return max_wagons_;
   }
 
  private:
   std::string designation_;
   std::size_t max_wagons_;
 };
+
+inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive) {
+  std::string text = "brak lokomotywy";
+  if (locomotive) {
+    text = std::format("{} (uciąg: {})", locomotive.designation(), locomotive.max_wagons());
+  }
+  return out << text;
+}
 
 // przechowywanie listy wagonow do rozwazenia (stl)
 // default ctor
