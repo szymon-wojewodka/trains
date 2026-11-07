@@ -4,10 +4,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <format>
-#include <string>
-#include <utility>
 #include <ostream>
+#include <string>
 #include <string_view>
+#include <utility>
 
 enum class WagonType : std::uint8_t {
   FIRST_CLASS,
@@ -108,7 +108,31 @@ inline constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
 // niejawna konwersja na wagonseries
 // konwersja na bool ?
 // spaceship i ==
+//
 // static metoda in_service (istniejace wagony)
+// Utrzymanie licznika in service w:
+//  - konstruktorach:
+//    - bezargumentowym: 0
+//    - Wagon(seria): +1
+//    - kopiującym: wagon niepusty ? +1 : 0
+//    - przenoszącym: 0
+//  - operatorach:
+//    - "=" :
+//      - przenoszącym:
+//        - a niepusty ? -1 : 0
+//      - kopiującym:
+//        - a pusty i b niepusty ? +1
+//        - a niepusty i b pusty ? -1
+//        - wpp (I): 0
+//        - edge case z przypisaniem na siebie: 0
+//          to jest szczególny przypadek (I):
+//            Jeśli a = b to a pusty -> b pusty i a niepusty -> b niepusty
+//   - destruktorze:
+//      - wagon niepusty ? -1 : 0
+//      - przy przenoszeniu (operator, konstruktor) trzeba jawnie uczynic ten 
+//        przenoszony pustym zeby nie powtarzac odejmowania w desktruktorze
+//  Więcej grzechów nie pamiętam
+//
 // static metoda ever_built (nadane numery) (mega useless??)
 // wypisywanie na strumien
 class Wagon {
