@@ -3,7 +3,7 @@ CPPFLAGS=-Wall -Wextra -O2 -std=c++23
 
 .PHONY: all clean 
 
-all: test
+all: test example
 
 test.cpp:
 
@@ -13,5 +13,5 @@ test: test.cpp
 example: trains_example.cpp
 	$(CPPC) $(CPPFLAGS) $< -o $@
  
-# clean:
-# 	rm -f *.o test
+clean:
+	rm -f *.o test example
