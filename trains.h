@@ -145,7 +145,8 @@ class Wagon {
   Wagon(const Wagon& wagon)
       : number_(wagon ? build_wagon() : EMPTY_NUMBER), series_(wagon.series()) {}
 
-  Wagon(Wagon&& wagon)  noexcept : number_(wagon.number()), series_(wagon.series()) {
+  Wagon(Wagon&& wagon) noexcept
+      : number_(wagon.number()), series_(wagon.series()) {
     wagon.number_ = EMPTY_NUMBER;
   }
 
@@ -166,7 +167,7 @@ class Wagon {
     return *this;
   }
 
-  Wagon& operator=(Wagon&& wagon) {
+  Wagon& operator=(Wagon&& wagon) noexcept {
     if (&wagon != this) {
       if (*this) {
         destroy_wagon();
