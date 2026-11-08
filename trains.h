@@ -243,26 +243,36 @@ inline std::ostream& operator<<(std::ostream& out, const Wagon& wagon) {
 // operator<<
 class Locomotive {
  public:
-  explicit Locomotive(std::string designation, const std::size_t max_wagons)
-      : designation_(designation == "" ? "?" : std::move(designation)),
+  explicit Locomotive(std::string designation, std::size_t max_wagons)
+      : designation_(designation.empty() ? "?" : std::move(designation)),
         max_wagons_(max_wagons) {}
 
-  // Implicit construction is allowed, designation_ gets initialized to "".
-  Locomotive() : max_wagons_(0) {}
+  Locomotive() = default;
 
-  Locomotive(Locomotive&) = delete;
+  Locomotive(const Locomotive&) = delete;
   Locomotive(Locomotive&& other) noexcept
       : designation_(std::move(other.designation_)), max_wagons_(other.max_wagons_) {
-    designation_ = "";
-    max_wagons_ = 0;
+    other.designation_.clear();
+    other.max_wagons_ = 0;
   }
 
-  Locomotive& operator=(Locomotive&) = delete;
+  Locomotive& operator=(const Locomotive&) = delete;
+
+  Locomotive& operator=(Locomotive&& other) noexcept {
+    if (&other != this) {
+      designation_ = std::move(other.designation_);
+      other.designation_.clear();
+      max_wagons_ = other.max_wagons_;
+      other.max_wagons_ = 0;
+    }
+    return *this;
+  }
+
   explicit operator bool() const {
-    return designation_ == "";
+    return !designation_.empty();
   }
 
-  std::string designation() const {
+  const std::string& designation() const {
     return designation_;
   }
 
@@ -272,15 +282,14 @@ class Locomotive {
 
  private:
   std::string designation_;
-  std::size_t max_wagons_;
+  std::size_t max_wagons_{};
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive) {
-  std::string text = "brak lokomotywy";
   if (locomotive) {
-    text = std::format("{} (uciąg: {})", locomotive.designation(), locomotive.max_wagons());
+    return out << std::format("{} (uciąg: {})", locomotive.designation(), locomotive.max_wagons());
   }
-  return out << text;
+  return out << "brak lokomotywy";
 }
 
 // przechowywanie listy wagonow do rozwazenia (stl)
