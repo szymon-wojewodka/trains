@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <compare>
 
 enum class WagonType : std::uint8_t {
   FIRST_CLASS,
@@ -22,8 +23,6 @@ enum class WagonType : std::uint8_t {
 // TODO: main_depot, daje referencje do zajezdni glownej,
 //  ktora na start konstruuje sie z lokomotywami i wagonami
 namespace trains_details {
-  inline constinit std::size_t wagons_ever_built{0};
-  inline constinit std::size_t wagons_in_service{0};
   // counter na id wagonu chyba
 
   struct WagonInfo {
@@ -37,7 +36,7 @@ namespace trains_details {
     constexpr WagonInfo SLEEPER = {.seat_count = 30, .name = "sypialny"};
     constexpr WagonInfo DINING = {.seat_count = 32, .name = "restauracyjny"};
   }  // namespace standard_series
-
+ 
   constexpr WagonInfo get_wagon_info(WagonType type) {
     using enum WagonType;
     switch (type) {
@@ -140,18 +139,101 @@ inline constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
 class Wagon {
  public:
   using unique_id_t = std::size_t;
-  unique_id_t number() {
-    // TODO
-    return 0;
+
+  Wagon() : number_(EMPTY_NUMBER), series_(WagonType::SLEEPER) {}
+  explicit Wagon(WagonSeries series) : number_(build_wagon()), series_(series) {}
+
+  Wagon(const Wagon& wagon) : number_(wagon ? build_wagon() : EMPTY_NUMBER), series_(wagon.series()) {}
+
+  Wagon(Wagon&& wagon) : number_(wagon.number()), series_(wagon.series()) {
+    wagon.number_ = EMPTY_NUMBER;
   }
 
-  WagonSeries series() {
-    // TODO
-    return {WagonType::FIRST_CLASS};
+  ~Wagon() {
+    if (*this) {
+      destroy_wagon();
+    }
+  }
+
+  Wagon& operator=(const Wagon& wagon) {
+    series_ = wagon.series();
+    if (!wagon && *this) {
+      number_ = EMPTY_NUMBER;
+      destroy_wagon();
+    } else if (wagon && !(*this)) {
+      number_ = build_wagon();
+    }
+    return *this;
+  }
+
+  Wagon& operator=(Wagon&& wagon) {
+    if (&wagon != this) {
+      if (*this) {
+        destroy_wagon();
+      }
+      number_ = wagon.number();
+      series_ = wagon.series();
+      wagon.number_ = EMPTY_NUMBER;
+    }
+    return *this;
+  }
+  
+  auto operator<=>(const Wagon& other) const {
+    return number_ <=> other.number();
+  }
+
+  bool operator==(const Wagon& other) const {
+    return other.number() == number_;
+  }
+
+  explicit operator bool() const {
+    return number_ != EMPTY_NUMBER;
+  }
+
+  operator WagonSeries() const {
+    return series_;
+  }
+
+  unique_id_t number() const {
+    return number_;
+  }
+
+  WagonSeries series() const {
+    return series_;
+  }
+
+  static std::size_t in_service() {
+    return wagons_in_service;
+  }
+
+  static std::size_t ever_built() {
+    return wagons_ever_built;
   }
 
  private:
+  static constexpr unique_id_t EMPTY_NUMBER = 0;
+  unique_id_t number_;
+  WagonSeries series_;
+  inline static constinit std::size_t wagons_ever_built{0};
+  inline static constinit std::size_t wagons_in_service{0};
+
+  static std::size_t build_wagon() {
+    ++wagons_ever_built;
+    ++wagons_in_service;
+    return wagons_ever_built;
+  }
+
+  static void destroy_wagon() {
+    --wagons_in_service;
+  }
 };
+
+inline std::ostream& operator<<(std::ostream& out, const Wagon& wagon) {
+  if (wagon) {
+    return out << "Wagon nr " << wagon.number() << ' ' << wagon.series(); 
+  }
+  return out << "Wagon pusty"; 
+}
 
 // gdy nazwa == "" -> nazwa = "?"
 // default ctor
