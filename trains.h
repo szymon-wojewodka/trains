@@ -3,7 +3,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <deque>
 #include <format>
+#include <initializer_list>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -249,7 +251,6 @@ class Locomotive {
         max_wagons_(max_wagons) {}
 
   Locomotive() = default;
-
   Locomotive(const Locomotive&) = delete;
   Locomotive(Locomotive&& other) noexcept
       : designation_(std::move(other.designation_)), max_wagons_(other.max_wagons_) {
@@ -305,27 +306,111 @@ inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive)
 // operator<< korzystajaca z operator<< lokomotywy i wagonow
 class Train {
  public:
-  std::size_t size() {
-    // TODO stl wie
-    return 0;
+  Train() = default;
+  explicit Train(Locomotive&& locomotive)
+      : locomotive_(std::move(locomotive)) {};
+
+  explicit Train(Locomotive&& locomotive, std::initializer_list<Wagon> wagons)
+      : locomotive_(std::move(locomotive)) {
+    for (const auto& wagon : wagons) {
+      // NOTE: Ten guard możnaby usunąć, bo += i tak kopiuje tylko jeśli
+      // można doczepić. Wykonując go oszczędzamy kolejnych iteracji kiedy nie
+      // można dalej dodawać wagonów, ale powielamy check który i tak zostanie
+      // wykonany przez operator +=.
+      if (is_full()) {
+        break;
+      }
+      *this += wagon;
+    }
   }
 
-  std::size_t capacity() {
-    // TODO lokomotywa.max_wagon()
-    return 0;
+  Train(Train&& other) noexcept
+      : locomotive_(std::move(other.locomotive_)),
+        wagons_(std::move(other.wagons_)),
+        seats_(other.seats_) {
+    other.locomotive_ = {};
+    other.wagons_ = {};
+    other.seats_ = 0;
+  }
+  Train& operator=(Train&& other) noexcept {
+    if (this != &other) {
+      wagons_ = std::move(other.wagons_);
+      locomotive_ = std::move(other.locomotive_);
+      seats_ = other.seats_;
+      other.locomotive_ = {};
+      other.wagons_ = {};
+      other.seats_ = 0;
+    }
+    return *this;
+  }
+
+  Train(const Train&) = delete;
+  Train& operator=(const Train&) = delete;
+
+  Train& operator+=(const Wagon& wagon) {
+    if (can_attach(wagon)) {
+      Wagon wagon_copy{wagon};
+      attach(std::move(wagon_copy));
+    }
+    return *this;
+  }
+  Train& operator+=(Wagon&& wagon) {
+    if (can_attach(wagon)) {
+      attach(std::move(wagon));
+    }
+    return *this;
+  }
+
+  const Wagon& operator[](std::size_t position) const {
+    return wagons_[position];
+  }
+
+  explicit operator bool() const {
+    return static_cast<bool>(locomotive_);
+  }
+
+  std::size_t size() const {
+    return wagons_.size();
+  }
+
+  std::size_t capacity() const {
+    return locomotive_.max_wagons();
   }
 
   std::size_t seats() const {
-    // TODO trzymac licznik
-    return 0;
+    return seats_;
   }
 
   const Locomotive& locomotive() const {
-    // TODO
+    return locomotive_;
   }
 
  private:
+  Locomotive locomotive_;
+  std::deque<Wagon> wagons_;
+  size_t seats_{0};
+
+  bool is_full() const {
+    return wagons_.size() >= locomotive_.max_wagons();
+  }
+
+  void attach(Wagon&& wagon) {
+    seats_ += wagon.series().seats();
+    wagons_.push_back(std::move(wagon));
+  }
+
+  bool can_attach(const Wagon& wagon) const {
+    return wagon && !is_full();
+  }
 };
+
+inline std::ostream& operator<<(std::ostream& out, const Train& train) {
+  out << "Skład: " << train.locomotive();
+  for (std::size_t i = 0; i < train.size(); i++) {
+    out << "\n\t" << train[i];
+  }
+  return out;
+}
 
 // jakas struktura (pewnie queue)
 // brak kopiowania
