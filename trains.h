@@ -283,7 +283,7 @@ class Locomotive {
 
  private:
   std::string designation_;
-  std::size_t max_wagons_;
+  std::size_t max_wagons_{0};
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive) {
