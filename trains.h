@@ -1,7 +1,6 @@
 #ifndef TRAINS_LIB
 #define TRAINS_LIB
 
-#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <format>
@@ -9,7 +8,6 @@
 #include <string>
 #include <string_view>
 #include <utility>
-#include <compare>
 
 enum class WagonType : std::uint8_t {
   FIRST_CLASS,
@@ -36,7 +34,7 @@ namespace trains_details {
     constexpr WagonInfo SLEEPER = {.seat_count = 30, .name = "sypialny"};
     constexpr WagonInfo DINING = {.seat_count = 32, .name = "restauracyjny"};
   }  // namespace standard_series
- 
+
   constexpr WagonInfo get_wagon_info(WagonType type) {
     using enum WagonType;
     switch (type) {
@@ -141,11 +139,13 @@ class Wagon {
   using unique_id_t = std::size_t;
 
   Wagon() : number_(EMPTY_NUMBER), series_(WagonType::SLEEPER) {}
-  explicit Wagon(WagonSeries series) : number_(build_wagon()), series_(series) {}
+  explicit Wagon(WagonSeries series)
+      : number_(build_wagon()), series_(series) {}
 
-  Wagon(const Wagon& wagon) : number_(wagon ? build_wagon() : EMPTY_NUMBER), series_(wagon.series()) {}
+  Wagon(const Wagon& wagon)
+      : number_(wagon ? build_wagon() : EMPTY_NUMBER), series_(wagon.series()) {}
 
-  Wagon(Wagon&& wagon) : number_(wagon.number()), series_(wagon.series()) {
+  Wagon(Wagon&& wagon)  noexcept : number_(wagon.number()), series_(wagon.series()) {
     wagon.number_ = EMPTY_NUMBER;
   }
 
@@ -177,7 +177,7 @@ class Wagon {
     }
     return *this;
   }
-  
+
   auto operator<=>(const Wagon& other) const {
     return number_ <=> other.number();
   }
@@ -230,9 +230,9 @@ class Wagon {
 
 inline std::ostream& operator<<(std::ostream& out, const Wagon& wagon) {
   if (wagon) {
-    return out << "Wagon nr " << wagon.number() << ' ' << wagon.series(); 
+    return out << "Wagon nr " << wagon.number() << ' ' << wagon.series();
   }
-  return out << "Wagon pusty"; 
+  return out << "Wagon pusty";
 }
 
 // gdy nazwa == "" -> nazwa = "?"
@@ -282,12 +282,13 @@ class Locomotive {
 
  private:
   std::string designation_;
-  std::size_t max_wagons_{};
+  std::size_t max_wagons_;
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive) {
   if (locomotive) {
-    return out << std::format("{} (uciąg: {})", locomotive.designation(), locomotive.max_wagons());
+    return out << std::format("{} (uciąg: {})", locomotive.designation(),
+                              locomotive.max_wagons());
   }
   return out << "brak lokomotywy";
 }
