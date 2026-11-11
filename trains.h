@@ -307,10 +307,8 @@ inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive)
 class Train {
  public:
   Train() = default;
-  explicit Train(Locomotive&& locomotive)
-      : locomotive_(std::move(locomotive)) {};
 
-  explicit Train(Locomotive&& locomotive, std::initializer_list<Wagon> wagons)
+  explicit Train(Locomotive&& locomotive, std::initializer_list<Wagon> wagons = {})
       : locomotive_(std::move(locomotive)) {
     for (const auto& wagon : wagons) {
       *this += wagon;
