@@ -506,9 +506,7 @@ inline Depot& main_depot() {
 class Dispatcher {
  public:
   explicit Dispatcher(Depot& depot = main_depot()) : depot_(depot) {}
-
   Dispatcher(const Dispatcher&) = default;
-
   Dispatcher& operator=(const Dispatcher&) = delete;
 
   const Depot& yard() const {
