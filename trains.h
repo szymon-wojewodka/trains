@@ -470,22 +470,22 @@ class Depot {
 };
 
 inline Depot& main_depot() {
-    static bool initialized = false;
-    static Depot depot;
-    if (!initialized) {
-        depot += Locomotive("EU07-001", 8);
-        depot += Locomotive("EP09-020", 12);
-        depot += Wagon(STANDARD_FIRST_CLASS);
-        depot += Wagon(STANDARD_SECOND_CLASS);
-        depot += Wagon(STANDARD_SECOND_CLASS);
-        depot += Wagon(STANDARD_SECOND_CLASS);
-        depot += Wagon(STANDARD_SECOND_CLASS);
-        depot += Wagon(STANDARD_SLEEPER);
-        depot += Wagon(STANDARD_SLEEPER);
-        depot += Wagon(STANDARD_DINING);
-        initialized = true;
-    }
-    return depot;
+  static bool initialized = false;
+  static Depot depot;
+  if (!initialized) {
+    depot += Locomotive("EU07-001", 8);
+    depot += Locomotive("EP09-020", 12);
+    depot += Wagon(STANDARD_FIRST_CLASS);
+    depot += Wagon(STANDARD_SECOND_CLASS);
+    depot += Wagon(STANDARD_SECOND_CLASS);
+    depot += Wagon(STANDARD_SECOND_CLASS);
+    depot += Wagon(STANDARD_SECOND_CLASS);
+    depot += Wagon(STANDARD_SLEEPER);
+    depot += Wagon(STANDARD_SLEEPER);
+    depot += Wagon(STANDARD_DINING);
+    initialized = true;
+  }
+  return depot;
 }
 
 class Dispatcher {
@@ -497,17 +497,18 @@ class Dispatcher {
   Dispatcher& operator=(const Dispatcher&) = delete;
 
   const Depot& yard() const {
-      return depot_;
+    return depot_;
   }
 
   Train assemble(WagonSeries series, std::size_t count) const {
     if (!static_cast<bool>(depot_.locomotives())) {
-        return Train{};
-    } 
+      return Train{};
+    }
     Train result{depot_.release_locomotive()};
-    while (count > 0 && static_cast<bool>(depot_.wagons(series)) && result.size() < result.capacity()) {
-        result += depot_.release_wagon(series);
-        --count;
+    while (count > 0 && static_cast<bool>(depot_.wagons(series)) &&
+           result.size() < result.capacity()) {
+      result += depot_.release_wagon(series);
+      --count;
     }
     return result;
   }
