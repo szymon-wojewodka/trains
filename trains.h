@@ -448,13 +448,11 @@ class Depot {
   }
 
   std::size_t locomotives() {
-    // TODO
-    return 0;
+    return locomotives_.size();
   }
 
   std::size_t wagons() {
-    // TODO
-    return 0;
+    return wagons_.size();
   }
 
  private:
