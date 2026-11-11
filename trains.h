@@ -416,14 +416,16 @@ class Depot {
   Depot(const Depot&) = delete;
   void operator=(const Depot&) = delete;
 
-  void operator+=(Wagon&& wagon) {
+  Depot& operator+=(Wagon&& wagon) {
     if (wagon) {
       wagons_.push_back(std::move(wagon));
     }
+    return *this;
   }
 
-  void operator+=(Locomotive&& locomotive) {
+  Depot& operator+=(Locomotive&& locomotive) {
     locomotives_.push_back(std::move(locomotive));
+    return *this;
   }
 
   Locomotive release_locomotive() {
