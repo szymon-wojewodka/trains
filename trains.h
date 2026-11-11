@@ -2,6 +2,7 @@
 #define TRAINS_LIB
 
 #include <algorithm>
+#include <array>
 #include <compare>
 #include <cstddef>
 #include <cstdint>
@@ -100,6 +101,23 @@ inline constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
 inline constexpr WagonSeries STANDARD_SECOND_CLASS{WagonType::SECOND_CLASS};
 inline constexpr WagonSeries STANDARD_SLEEPER{WagonType::SLEEPER};
 inline constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
+
+namespace main_depot_defaults {
+  struct LocomotiveInfo {
+    std::string designation;
+    std::size_t max_wagons;
+  };
+
+  // NOTE: nazwy są tutaj troche mylące ale locomotivesInfo albo wagonsSeries tez bedzie dziwne
+  constexpr std::array<LocomotiveInfo, 2> locomotives = {
+      LocomotiveInfo{.designation = "EU07-001", .max_wagons = 8},
+      LocomotiveInfo{.designation = "EP09-020", .max_wagons = 12}};
+
+  constexpr std::array<WagonSeries, 8> wagons = {
+      STANDARD_FIRST_CLASS,  STANDARD_SECOND_CLASS, STANDARD_SECOND_CLASS,
+      STANDARD_SECOND_CLASS, STANDARD_SECOND_CLASS, STANDARD_SLEEPER,
+      STANDARD_SLEEPER,      STANDARD_DINING};
+}  // namespace main_depot_defaults
 
 // TODO:
 // robienie unique_id
@@ -473,16 +491,13 @@ inline Depot& main_depot() {
   static bool initialized = false;
   static Depot depot;
   if (!initialized) {
-    depot += Locomotive("EU07-001", 8);
-    depot += Locomotive("EP09-020", 12);
-    depot += Wagon(STANDARD_FIRST_CLASS);
-    depot += Wagon(STANDARD_SECOND_CLASS);
-    depot += Wagon(STANDARD_SECOND_CLASS);
-    depot += Wagon(STANDARD_SECOND_CLASS);
-    depot += Wagon(STANDARD_SECOND_CLASS);
-    depot += Wagon(STANDARD_SLEEPER);
-    depot += Wagon(STANDARD_SLEEPER);
-    depot += Wagon(STANDARD_DINING);
+    // NOTE: Może tutaj po wartości jednak?
+    for (const auto& [designation, max_wagons] : main_depot_defaults::locomotives) {
+      depot += Locomotive{designation, max_wagons};
+    }
+    for (const auto series : main_depot_defaults::wagons) {
+      depot += Wagon{series};
+    }
     initialized = true;
   }
   return depot;
