@@ -313,13 +313,6 @@ class Train {
   explicit Train(Locomotive&& locomotive, std::initializer_list<Wagon> wagons)
       : locomotive_(std::move(locomotive)) {
     for (const auto& wagon : wagons) {
-      // NOTE: Ten guard możnaby usunąć, bo += i tak kopiuje tylko jeśli
-      // można doczepić. Wykonując go oszczędzamy kolejnych iteracji kiedy nie
-      // można dalej dodawać wagonów, ale powielamy check który i tak zostanie
-      // wykonany przez operator +=.
-      if (is_full()) {
-        break;
-      }
       *this += wagon;
     }
   }
