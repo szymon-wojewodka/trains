@@ -1,11 +1,13 @@
 #ifndef TRAINS_LIB
 #define TRAINS_LIB
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <deque>
 #include <format>
 #include <initializer_list>
+#include <list>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -414,6 +416,11 @@ class Depot {
   Depot(const Depot&) = delete;
   void operator=(const Depot&) = delete;
 
+  void operator+=(Wagon&& wagon) {
+    if (wagon) {
+      wagons_.push_back(std::move(wagon));
+    }
+  }
 
   void operator+=(Locomotive&& locomotive) {
     locomotives_.push_back(std::move(locomotive));
@@ -428,8 +435,16 @@ class Depot {
     return locomotive;
   }
 
-  Wagon& release_wagon() {
-    // TODO
+  Wagon release_wagon(WagonSeries series) {
+    auto it = std::ranges::find_if(wagons_, [series](Wagon& wagon) {
+      return wagon.series() == series;
+    });
+    if (it == wagons_.end()) {
+      return Wagon{};
+    }
+    Wagon wagon = std::move(*it);
+    wagons_.erase(it);
+    return wagon;
   }
 
   std::size_t locomotives() {
@@ -444,6 +459,7 @@ class Depot {
 
  private:
   std::deque<Locomotive> locomotives_;
+  std::list<Wagon> wagons_;
 };
 
 class Dispatcher {
