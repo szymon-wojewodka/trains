@@ -424,7 +424,9 @@ class Depot {
   }
 
   Depot& operator+=(Locomotive&& locomotive) {
-    locomotives_.push_back(std::move(locomotive));
+    if (locomotive) {
+      locomotives_.push_back(std::move(locomotive));
+    }
     return *this;
   }
 
