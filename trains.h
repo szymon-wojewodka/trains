@@ -469,6 +469,25 @@ class Depot {
   std::list<Wagon> wagons_;
 };
 
+inline Depot& main_depot() {
+    static bool initialized = false;
+    static Depot depot;
+    if (!initialized) {
+        depot += Locomotive("EU07-001", 8);
+        depot += Locomotive("EP09-020", 12);
+        depot += Wagon(STANDARD_FIRST_CLASS);
+        depot += Wagon(STANDARD_SECOND_CLASS);
+        depot += Wagon(STANDARD_SECOND_CLASS);
+        depot += Wagon(STANDARD_SECOND_CLASS);
+        depot += Wagon(STANDARD_SECOND_CLASS);
+        depot += Wagon(STANDARD_SLEEPER);
+        depot += Wagon(STANDARD_SLEEPER);
+        depot += Wagon(STANDARD_DINING);
+        initialized = true;
+    }
+    return depot;
+}
+
 class Dispatcher {
  public:
   const Depot& yard() {
