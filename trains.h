@@ -490,12 +490,28 @@ inline Depot& main_depot() {
 
 class Dispatcher {
  public:
-  const Depot& yard() {
-    // TODO
+  explicit Dispatcher(Depot& depot = main_depot()) : depot_(depot) {}
+
+  Dispatcher& operator=(const Dispatcher&) = delete;
+
+  const Depot& yard() const {
+      return depot_;
   }
 
-  // metoda assemble
+  Train assemble(WagonSeries series, std::size_t count) const {
+    if (!static_cast<bool>(depot_.locomotives())) {
+        return Train{};
+    } 
+    Train result{depot_.release_locomotive()};
+    while (count > 0 && static_cast<bool>(depot_.wagons(series)) && result.size() < result.capacity()) {
+        result += depot_.release_wagon(series);
+        --count;
+    }
+    return result;
+  }
+
  private:
+  Depot& depot_;
 };
 
 #endif  // TRAINS_LIB
