@@ -5,12 +5,10 @@
 #include <cstdint>
 #include <deque>
 #include <format>
-#include <functional>
 #include <initializer_list>
 #include <ostream>
 #include <string>
 #include <string_view>
-#include <unordered_map>
 #include <utility>
 
 enum class WagonType : std::uint8_t {
@@ -99,14 +97,6 @@ inline constexpr WagonSeries STANDARD_FIRST_CLASS{WagonType::FIRST_CLASS};
 inline constexpr WagonSeries STANDARD_SECOND_CLASS{WagonType::SECOND_CLASS};
 inline constexpr WagonSeries STANDARD_SLEEPER{WagonType::SLEEPER};
 inline constexpr WagonSeries STANDARD_DINING{WagonType::DINING};
-
-struct WagonSeriesHash {
-  std::size_t operator()(const WagonSeries& series) const noexcept {
-    std::size_t h1 = std::hash<std::size_t>{}(series.seats());
-    std::size_t h2 = std::hash<WagonType>{}(series.type());
-    return h1 ^ (0x9e3779b9 + h2 + (h1 << 6) + (h1 >> 2));
-  }
-};
 
 // TODO:
 // robienie unique_id
@@ -424,11 +414,6 @@ class Depot {
   Depot(const Depot&) = delete;
   void operator=(const Depot&) = delete;
 
-  void operator+=(Wagon&& wagon) {
-    WagonSeries series = wagon.series();
-    auto [it, inserted] = wagons_.try_emplace(series);
-    it->second.push_back(std::move(wagon));
-  }
 
   void operator+=(Locomotive&& locomotive) {
     locomotives_.push_back(std::move(locomotive));
@@ -447,19 +432,18 @@ class Depot {
     // TODO
   }
 
-  std::size_t locomotives() const {
+  std::size_t locomotives() {
     // TODO
     return 0;
   }
 
-  std::size_t wagons() const {
+  std::size_t wagons() {
     // TODO
     return 0;
   }
 
  private:
   std::deque<Locomotive> locomotives_;
-  std::unordered_map<WagonSeries, std::deque<Wagon>, WagonSeriesHash> wagons_;
 };
 
 class Dispatcher {
