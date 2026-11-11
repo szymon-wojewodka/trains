@@ -459,6 +459,12 @@ class Depot {
     return wagons_.size();
   }
 
+  std::size_t wagons(WagonSeries series) const {
+    return std::count_if(wagons_.begin(), wagons_.end(), [series](const Wagon& wagon) {
+      return wagon.series() == series;
+    });
+  }
+
  private:
   std::deque<Locomotive> locomotives_;
   std::list<Wagon> wagons_;
