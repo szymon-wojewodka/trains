@@ -414,7 +414,7 @@ class Depot {
  public:
   Depot() = default;
   Depot(const Depot&) = delete;
-  void operator=(const Depot&) = delete;
+  Depot& operator=(const Depot&) = delete;
 
   Depot& operator+=(Wagon&& wagon) {
     if (wagon) {
