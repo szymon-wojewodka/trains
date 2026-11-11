@@ -451,11 +451,11 @@ class Depot {
     return wagon;
   }
 
-  std::size_t locomotives() {
+  std::size_t locomotives() const {
     return locomotives_.size();
   }
 
-  std::size_t wagons() {
+  std::size_t wagons() const {
     return wagons_.size();
   }
 
