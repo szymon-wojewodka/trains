@@ -516,13 +516,16 @@ class Dispatcher {
   }
 
   Train assemble(WagonSeries series, std::size_t count) const {
-    if (!static_cast<bool>(depot_.locomotives())) {
+    if (depot_.locomotives() == 0) {
       return Train{};
     }
     Train result{depot_.release_locomotive()};
-    while (count > 0 && static_cast<bool>(depot_.wagons(series)) &&
-           result.size() < result.capacity()) {
-      result += depot_.release_wagon(series);
+    while (count > 0 && result.size() < result.capacity()) {
+      Wagon wagon = depot_.release_wagon(series);
+      if (!wagon) {
+        break;
+      }
+      result += std::move(wagon);
       --count;
     }
     return result;
