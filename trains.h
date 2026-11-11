@@ -2,6 +2,7 @@
 #define TRAINS_LIB
 
 #include <algorithm>
+#include <compare>
 #include <cstddef>
 #include <cstdint>
 #include <deque>
@@ -183,7 +184,7 @@ class Wagon {
     return *this;
   }
 
-  auto operator<=>(const Wagon& other) const {
+  std::strong_ordering operator<=>(const Wagon& other) const {
     return number_ <=> other.number();
   }
 
@@ -321,17 +322,16 @@ class Train {
       : locomotive_(std::move(other.locomotive_)),
         wagons_(std::move(other.wagons_)),
         seats_(other.seats_) {
-    other.locomotive_ = {};
-    other.wagons_ = {};
+    other.wagons_.clear();
     other.seats_ = 0;
   }
+
   Train& operator=(Train&& other) noexcept {
     if (this != &other) {
       wagons_ = std::move(other.wagons_);
       locomotive_ = std::move(other.locomotive_);
       seats_ = other.seats_;
-      other.locomotive_ = {};
-      other.wagons_ = {};
+      other.wagons_.clear();
       other.seats_ = 0;
     }
     return *this;
@@ -342,8 +342,7 @@ class Train {
 
   Train& operator+=(const Wagon& wagon) {
     if (can_attach(wagon)) {
-      Wagon wagon_copy{wagon};
-      attach(std::move(wagon_copy));
+      attach(Wagon{wagon});
     }
     return *this;
   }
@@ -381,7 +380,7 @@ class Train {
  private:
   Locomotive locomotive_;
   std::deque<Wagon> wagons_;
-  size_t seats_{0};
+  std::size_t seats_{0};
 
   bool is_full() const {
     return wagons_.size() >= locomotive_.max_wagons();
@@ -440,7 +439,7 @@ class Depot {
   }
 
   Wagon release_wagon(WagonSeries series) {
-    auto it = std::ranges::find_if(wagons_, [series](Wagon& wagon) {
+    auto it = std::ranges::find_if(wagons_, [series](const Wagon& wagon) {
       return wagon.series() == series;
     });
     if (it == wagons_.end()) {
