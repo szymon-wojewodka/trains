@@ -410,8 +410,22 @@ inline std::ostream& operator<<(std::ostream& out, const Train& train) {
 //
 class Depot {
  public:
-  Locomotive& release_locomotive() {
-    // TODO
+  Depot() = default;
+  Depot(const Depot&) = delete;
+  void operator=(const Depot&) = delete;
+
+
+  void operator+=(Locomotive&& locomotive) {
+    locomotives_.push_back(std::move(locomotive));
+  }
+
+  Locomotive release_locomotive() {
+    if (locomotives_.empty()) {
+      return Locomotive{};
+    }
+    Locomotive locomotive = std::move(locomotives_.front());
+    locomotives_.pop_front();
+    return locomotive;
   }
 
   Wagon& release_wagon() {
@@ -429,6 +443,7 @@ class Depot {
   }
 
  private:
+  std::deque<Locomotive> locomotives_;
 };
 
 class Dispatcher {
