@@ -24,11 +24,7 @@ enum class WagonType : std::uint8_t {
 
 // TODO: aliasy dla size_t
 // TODO: const-correctness (metody tez)
-// TODO: main_depot, daje referencje do zajezdni glownej,
-//  ktora na start konstruuje sie z lokomotywami i wagonami
 namespace trains_details {
-  // counter na id wagonu chyba
-
   struct WagonInfo {
     std::size_t seat_count;
     std::string_view name;
@@ -56,10 +52,6 @@ namespace trains_details {
     std::unreachable();
   }
 }  // namespace trains_details
-
-// wszedzie =, += dajace referencje
-// wszystkie liczby size_t
-// aliasy dla typow (czy w namespace?)
 
 class WagonSeries {
  public:
@@ -119,44 +111,6 @@ namespace main_depot_defaults {
       STANDARD_SLEEPER,      STANDARD_DINING};
 }  // namespace main_depot_defaults
 
-// TODO:
-// robienie unique_id
-// default ctor (id = 0)
-// ctor przyjmujacy WagonSeries, nowy id
-// copy ctor - kopiuje WagonSeries, nowy id
-// move ctor
-// operator= copy z zachowaniem id, lub nowym jesli bez id
-// operator= move (trzeba uwazac na x = std::move(x))
-// niejawna konwersja na wagonseries
-// konwersja na bool ?
-// spaceship i ==
-//
-// static metoda in_service (istniejace wagony)
-// Utrzymanie licznika in service w:
-//  - konstruktorach:
-//    - bezargumentowym: 0
-//    - Wagon(seria): +1
-//    - kopiującym: wagon niepusty ? +1 : 0
-//    - przenoszącym: 0
-//  - operatorach:
-//    - "=" :
-//      - przenoszącym:
-//        - a niepusty ? -1 : 0
-//      - kopiującym:
-//        - a pusty i b niepusty ? +1
-//        - a niepusty i b pusty ? -1
-//        - wpp (I): 0
-//        - edge case z przypisaniem na siebie: 0
-//          to jest szczególny przypadek (I):
-//            Jeśli a = b to a pusty -> b pusty i a niepusty -> b niepusty
-//   - destruktorze:
-//      - wagon niepusty ? -1 : 0
-//      - przy przenoszeniu (operator, konstruktor) trzeba jawnie uczynic ten
-//        przenoszony pustym zeby nie powtarzac odejmowania w desktruktorze
-//  Więcej grzechów nie pamiętam
-//
-// static metoda ever_built (nadane numery) (mega useless??)
-// wypisywanie na strumien
 class Wagon {
  public:
   using unique_id_t = std::size_t;
@@ -259,12 +213,6 @@ inline std::ostream& operator<<(std::ostream& out, const Wagon& wagon) {
   return out << "Wagon pusty";
 }
 
-// gdy nazwa == "" -> nazwa = "?"
-// default ctor
-// move ctor, operator= z move
-// kopiowanie = delete
-// jawna konwersja na bool
-// operator<<
 class Locomotive {
  public:
   explicit Locomotive(std::string designation, std::size_t max_wagons)
@@ -316,15 +264,6 @@ inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive)
   return out << "brak lokomotywy";
 }
 
-// przechowywanie listy wagonow do rozwazenia (stl)
-// default ctor
-// ctor z przenoszeniem lokomotywy, initializer list, musimy jakos pominac puste wagony
-// move ctor, operator= z move, po move nie ma lokomotywy i wagonow (jest pusty)
-// nie ma kopii
-// operator+= lvalue -> kopia, rvalue -> move
-// opeartor[] 0->max-1
-// konwersja na bool
-// operator<< korzystajaca z operator<< lokomotywy i wagonow
 class Train {
  public:
   Train() = default;
@@ -422,11 +361,6 @@ inline std::ostream& operator<<(std::ostream& out, const Train& train) {
   return out;
 }
 
-// jakas struktura (pewnie queue)
-// brak kopiowania
-// operator+=  (dla wagonu tylko move)
-// dziedziczenie po dwoch depotach?
-//
 class Depot {
  public:
   Depot() = default;
