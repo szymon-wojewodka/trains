@@ -22,8 +22,6 @@ enum class WagonType : std::uint8_t {
   DINING
 };
 
-// TODO: aliasy dla size_t
-// TODO: const-correctness (metody tez)
 namespace trains_details {
   struct WagonInfo {
     std::size_t seat_count;
@@ -100,7 +98,6 @@ namespace main_depot_defaults {
     std::size_t max_wagons;
   };
 
-  // NOTE: nazwy są tutaj troche mylące ale locomotivesInfo albo wagonsSeries tez bedzie dziwne
   constexpr std::array<LocomotiveInfo, 2> locomotives = {
       LocomotiveInfo{.designation = "EU07-001", .max_wagons = 8},
       LocomotiveInfo{.designation = "EP09-020", .max_wagons = 12}};
@@ -425,7 +422,6 @@ inline Depot& main_depot() {
   static bool initialized = false;
   static Depot depot;
   if (!initialized) {
-    // NOTE: Może tutaj po wartości jednak?
     for (const auto& [designation, max_wagons] : main_depot_defaults::locomotives) {
       depot += Locomotive{designation, max_wagons};
     }
