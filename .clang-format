@@ -1,5 +1,7 @@
 BasedOnStyle: Google
 IndentWidth: 2
+AccessModifierOffset: -2
+IndentAccessModifiers: false
 ColumnLimit: 80
 PenaltyExcessCharacter: 1
 PenaltyBreakAssignment: 20
