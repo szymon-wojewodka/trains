@@ -54,7 +54,7 @@ namespace trains_details {
 }  // namespace trains_details
 
 class WagonSeries {
- public:
+public:
   constexpr explicit WagonSeries(WagonType type, std::size_t seats)
       : type_(type), seats_count_(seats) {}
 
@@ -78,7 +78,7 @@ class WagonSeries {
     return seats_count_;
   }
 
- private:
+private:
   WagonType type_;
   std::size_t seats_count_;
 };
@@ -112,7 +112,7 @@ namespace main_depot_defaults {
 }  // namespace main_depot_defaults
 
 class Wagon {
- public:
+public:
   using unique_id_t = std::size_t;
 
   Wagon() : number_(EMPTY_NUMBER), series_(WagonType::SLEEPER) {}
@@ -188,7 +188,7 @@ class Wagon {
     return wagons_ever_built;
   }
 
- private:
+private:
   static constexpr unique_id_t EMPTY_NUMBER = 0;
   unique_id_t number_;
   WagonSeries series_;
@@ -214,7 +214,7 @@ inline std::ostream& operator<<(std::ostream& out, const Wagon& wagon) {
 }
 
 class Locomotive {
- public:
+public:
   explicit Locomotive(std::string designation, std::size_t max_wagons)
       : designation_(designation.empty() ? "?" : std::move(designation)),
         max_wagons_(max_wagons) {}
@@ -251,7 +251,7 @@ class Locomotive {
     return max_wagons_;
   }
 
- private:
+private:
   std::string designation_;
   std::size_t max_wagons_{0};
 };
@@ -265,7 +265,7 @@ inline std::ostream& operator<<(std::ostream& out, const Locomotive& locomotive)
 }
 
 class Train {
- public:
+public:
   Train() = default;
 
   explicit Train(Locomotive&& locomotive, std::initializer_list<Wagon> wagons = {})
@@ -334,7 +334,7 @@ class Train {
     return locomotive_;
   }
 
- private:
+private:
   Locomotive locomotive_;
   std::deque<Wagon> wagons_;
   std::size_t seats_{0};
@@ -362,7 +362,7 @@ inline std::ostream& operator<<(std::ostream& out, const Train& train) {
 }
 
 class Depot {
- public:
+public:
   Depot() = default;
   Depot(const Depot&) = delete;
   Depot& operator=(const Depot&) = delete;
@@ -416,7 +416,7 @@ class Depot {
     });
   }
 
- private:
+private:
   std::deque<Locomotive> locomotives_;
   std::list<Wagon> wagons_;
 };
@@ -438,7 +438,7 @@ inline Depot& main_depot() {
 }
 
 class Dispatcher {
- public:
+public:
   explicit Dispatcher(Depot& depot = main_depot()) : depot_(depot) {}
   Dispatcher(const Dispatcher&) = default;
   Dispatcher& operator=(const Dispatcher&) = delete;
@@ -463,7 +463,7 @@ class Dispatcher {
     return result;
   }
 
- private:
+private:
   Depot& depot_;
 };
 
