@@ -443,6 +443,7 @@ public:
     return depot_;
   }
 
+  // Czy na pewno const?
   Train assemble(WagonSeries series, std::size_t count) const {
     if (depot_.locomotives() == 0) {
       return Train{};
